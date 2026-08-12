@@ -20,30 +20,27 @@ class MyApp extends StatelessWidget {
           backgroundColor: const Color(0xFF1B263B),
           title: const Text(
             'My First Flutter Application',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
 
-        body: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            // Spider Image (outside the white card)
-            Positioned(
-              top: 60,
-              child: Image.asset(
-                'assets/spider.png',
-                width: 140,
-                height: 140,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Spider Image (outside the white card)
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Image.asset(
+                  'assets/spider.png',
+                  width: 140,
+                  height: 140,
+                ),
               ),
-            ),
 
-            // White Card
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 80),
+              // Card 1
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
                 child: Card(
                   elevation: 12,
                   color: const Color(0xFFF5F5F5),
@@ -54,21 +51,40 @@ class MyApp extends StatelessWidget {
                     padding: const EdgeInsets.all(30.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          "💀",
-                          style: TextStyle(fontSize: 60),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.add,
+                              size: 35,
+                            ),
+
+                            const SizedBox(width: 15),
+
+                            const Text(
+                              "💀",
+                              style: TextStyle(fontSize: 60),
+                            ),
+
+                            const SizedBox(width: 15),
+
+                            const Icon(
+                              Icons.add,
+                              size: 35,
+                            ),
+                          ],
                         ),
 
                         const SizedBox(height: 20),
 
                         const Text(
                           "Kyla Marie S. Caballero",
-                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 30,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF333333),
                           ),
                         ),
 
@@ -76,42 +92,118 @@ class MyApp extends StatelessWidget {
 
                         const Text(
                           "BSIT 3",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 22,
-                            color: Color(0xFF333333),
-                          ),
+                          style: TextStyle(fontSize: 13),
                         ),
 
                         const SizedBox(height: 15),
 
                         const Text(
                           "My First Flutter Application",
-                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF333333),
+                            fontStyle: FontStyle.italic,
                           ),
                         ),
 
                         const SizedBox(height: 15),
 
                         const Text(
-                          "August 4, 2026",
-                          textAlign: TextAlign.center,
+                          "August 11, 2026",
+                          style: TextStyle(fontSize: 13),
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        const Text(
+                          "Talent: Drawing",
                           style: TextStyle(
-                            fontSize: 20,
-                            color: Color(0xFF333333),
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Age: 20",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Text(
+                              "Birthdate: June 4, 2006",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              // Card 2
+              Card(
+                elevation: 12,
+                color: const Color(0xFFF5F5F5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "My Favorites",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      const Text(
+                        "Favorite Movie: Spider-Man",
+                        style: TextStyle(fontSize: 15),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Favorite Game: Minecraft",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(width: 20),
+                          const Text(
+                            "Favorite Food: Pizza",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
