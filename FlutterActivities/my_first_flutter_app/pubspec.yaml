@@ -58,8 +58,14 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/spider.png
-    
+  - assets/spider.png
+  - assets/kylamarie.jpg
+  - assets/satorugojo.jpg
+  - assets/sugurugeto.jpg
+  - assets/chosokamo.jpg
+  - assets/sukuna.jpg
+  - assets/makizenin.jpg
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
