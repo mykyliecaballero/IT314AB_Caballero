@@ -16,62 +16,81 @@ class Profile {
   final String image;
   final String? name;
   final String? course;
+  final String? yearLevel;
   final int? age;
   final String? hobby;
+  final String? studentId;
+  final String? email;
+  final String? favoriteSubject;
 
   const Profile({
     required this.image,
     this.name,
     this.course,
+    this.yearLevel,
     this.age,
     this.hobby,
+    this.studentId,
+    this.email,
+    this.favoriteSubject,
   });
 }
 
 const List<Profile> profiles = [
-  // Profile 1 - Complete
   Profile(
     image: "assets/satorugojo.jpg",
     name: "Satoru Gojo",
-    course: "BSIT 3",
+    course: "BSIT",
+    yearLevel: "3rd Year",
     age: 20,
     hobby: "Eating Sweets",
+    studentId: "2023-001",
+    email: "gojo@student.com",
+    favoriteSubject: "Programming",
   ),
-
-  // Profile 2 - Hobby is missing
   Profile(
     image: "assets/sugurugeto.jpg",
     name: "Suguru Geto",
-    course: "BSIT 3",
+    course: "BSIT",
+    yearLevel: "3rd Year",
     age: 19,
-    hobby: null,
+    hobby: "Reading",
+    studentId: "2023-002",
+    email: "geto@student.com",
+    favoriteSubject: "Database",
   ),
-
-  // Profile 3 - Course is missing
   Profile(
     image: "assets/chosokamo.jpg",
     name: "Choso Kamo",
-    course: null,
+    course: "BSIT",
+    yearLevel: "4th Year",
     age: 25,
     hobby: "Spending time with brothers",
+    studentId: "2022-003",
+    email: "choso@student.com",
+    favoriteSubject: "Networking",
   ),
-
-  // Profile 4 - Name is missing
   Profile(
     image: "assets/sukuna.jpg",
-    name: null,
-    course: "BSIT 4",
+    name: "Ryomen Sukuna",
+    course: "BSIT",
+    yearLevel: "4th Year",
     age: 30,
     hobby: "Eating",
+    studentId: "2022-004",
+    email: "sukuna@student.com",
+    favoriteSubject: "Cybersecurity",
   ),
-
-  // Profile 5 - Age is missing
   Profile(
     image: "assets/makizenin.jpg",
-    name: "Make Zenin",
-    course: "BSIT 1",
-    age: null,
+    name: "Maki Zenin",
+    course: "BSIT",
+    yearLevel: "1st Year",
+    age: 20,
     hobby: "Crushing Cans",
+    studentId: "2025-005",
+    email: "maki@student.com",
+    favoriteSubject: "Web Development",
   ),
 ];
 
@@ -80,12 +99,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sortedProfiles = [...profiles];
+
+    sortedProfiles.sort(
+      (a, b) => (a.name ?? "").compareTo(b.name ?? ""),
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'My First Flutter Application',
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 0, 4, 8),
-
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: const Color.fromARGB(255, 1, 1, 100),
@@ -97,215 +121,144 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-
-<<<<<<< Updated upstream
-        body: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            // Spider Image (outside the white card)
-            Positioned(
-              top: 60,
-              child: Image.asset(
-                'assets/spider.png',
-                width: 140,
-                height: 140,
-              ),
-            ),
-
-            // White Card
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 80),
-                child: Card(
-                  elevation: 12,
-                  color: const Color(0xFFF5F5F5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "💀",
-                          style: TextStyle(fontSize: 60),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        const Text(
-                          "Kyla Marie S. Caballero",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF333333),
-                          ),
-                        ),
-
-                        const SizedBox(height: 15),
-
-                        const Text(
-                          "BSIT 3",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 22,
-                            color: Color(0xFF333333),
-                          ),
-                        ),
-
-                        const SizedBox(height: 15),
-
-                        const Text(
-                          "My First Flutter Application",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF333333),
-                          ),
-                        ),
-
-                        const SizedBox(height: 15),
-
-                        const Text(
-                          "August 4, 2026",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Color(0xFF333333),
-                          ),
-                        ),
-                      ],
-                    ),
+        body: profiles.isEmpty
+            ? const Center(
+                child: Text(
+                  "No students found.",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 13,
                   ),
                 ),
-              ),
-            ),
-          ],
-=======
-        // FLAG 6:
-        // Allows the user to scroll through all profiles.
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
+              )
+            : ListView.builder(
+                itemCount: sortedProfiles.length,
+                itemBuilder: (context, index) {
+                  final profile = sortedProfiles[index];
 
-              // Create one card for every profile
-              for (final profile in profiles)
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    bottom: 20,
-                  ),
-                  child: Card(
-                    elevation: 12,
-                    color: const Color.fromARGB(255, 253, 253, 253),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: 20,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Profile Image
-                          Image.asset(
-                            profile.image,
-                            width: 140,
-                            height: 140,
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Skull and icons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.add,
-                                size: 35,
+                    child: Card(
+                      elevation: 12,
+                      color: const Color.fromARGB(255, 253, 253, 253),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(30.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              profile.image,
+                              width: 140,
+                              height: 140,
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.add,
+                                  size: 35,
+                                ),
+                                const SizedBox(width: 15),
+                                const Text(
+                                  "💀",
+                                  style: TextStyle(fontSize: 60),
+                                ),
+                                const SizedBox(width: 15),
+                                const Icon(
+                                  Icons.add,
+                                  size: 35,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              profile.name ?? "Name: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
                               ),
-
-                              const SizedBox(width: 15),
-
-                              const Text(
-                                "💀",
-                                style: TextStyle(fontSize: 60),
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              profile.course ?? "Course: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 13,
                               ),
-
-                              const SizedBox(width: 15),
-
-                              const Icon(
-                                Icons.add,
-                                size: 35,
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              profile.yearLevel ??
+                                  "Year Level: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 13,
                               ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // NAME
-                          Text(
-                            profile.name ?? "Name: Not provided",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-
-                          const SizedBox(height: 15),
-
-                          // COURSE
-                          Text(
-                            profile.course ?? "Course: Not provided",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 13,
+                            const SizedBox(height: 15),
+                            Text(
+                              profile.age != null
+                                  ? "Age: ${profile.age}"
+                                  : "Age: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 13,
+                              ),
                             ),
-                          ),
-
-                          const SizedBox(height: 15),
-
-                          // AGE
-                          Text(
-                            profile.age != null
-                                ? "Age: ${profile.age}"
-                                : "Age: Not provided",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 13,
+                            const SizedBox(height: 15),
+                            Text(
+                              profile.hobby ?? "Hobby: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-
-                          const SizedBox(height: 15),
-
-                          // HOBBY
-                          Text(
-                            profile.hobby ?? "Hobby: Not provided",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(height: 15),
+                            Text(
+                              profile.studentId ??
+                                  "Student ID: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 13,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 15),
+                            Text(
+                              profile.email ?? "Email: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              profile.favoriteSubject ??
+                                  "Favorite Subject: Not provided",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-
-              const SizedBox(height: 30),
-            ],
-          ),
->>>>>>> Stashed changes
-        ),
+                  );
+                },
+              ),
       ),
     );
   }
