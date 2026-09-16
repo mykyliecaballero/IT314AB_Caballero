@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
 class Profile {
   final String? image;
   final String? name;
@@ -93,14 +89,42 @@ const List<Profile> profiles = [
   ),
 ];
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      initialRoute: "/student-list",
+
+      routes: {
+        "/student-list": (context) => const StudentListScreen(),
+
+        "/add-student": (context) => const AddStudentScreen(),
+
+        "/student-details": (context) {
+          final profile =
+              ModalRoute.of(context)!.settings.arguments as Profile;
+
+          return StudentDetailsScreen(
+            profile: profile,
+          );
+        },
+      },
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class StudentListScreen extends StatefulWidget {
+  const StudentListScreen({super.key});
+
+  @override
+  State<StudentListScreen> createState() => _StudentListScreenState();
+}
+
+class _StudentListScreenState extends State<StudentListScreen> {
   final Set<String> favoriteStudents = {};
 
   List<Profile> students = [...profiles];
@@ -128,304 +152,438 @@ class _MyAppState extends State<MyApp> {
       (a, b) => (a.name ?? "").compareTo(b.name ?? ""),
     );
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 0, 4, 8),
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 1, 1, 100),
-          centerTitle: true,
-          title: const Text(
-            "My First Flutter Application",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 0, 4, 8),
+
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 1, 1, 100),
+        centerTitle: true,
+
+        title: const Text(
+          "Student List",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        body: isLoading
-            ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 15),
-                    Text(
-                      "Loading students...",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : students.isEmpty
-                ? const Center(
-                    child: Text(
-                      "No students found.",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: sortedProfiles.length,
-                    itemBuilder: (context, index) {
-                      final profile = sortedProfiles[index];
-                      final isFavorite =
-                          favoriteStudents.contains(profile.studentId);
 
-                      return GestureDetector(
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Student card tapped!"),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          color: isFavorite
-                              ? Colors.pink.shade50
-                              : const Color.fromARGB(255, 253, 253, 253),
-                          elevation: 6,
-                          margin: const EdgeInsets.all(12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              children: [
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                "/add-student",
+              );
+            },
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+
+      body: isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+
+                  SizedBox(height: 15),
+
+                  Text(
+                    "Loading students...",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : students.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No students found.",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: sortedProfiles.length,
+
+                  itemBuilder: (context, index) {
+                    final profile = sortedProfiles[index];
+
+                    final isFavorite =
+                        favoriteStudents.contains(
+                      profile.studentId,
+                    );
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          "/student-details",
+                          arguments: profile,
+                        );
+                      },
+
+                      child: Card(
+                        color: isFavorite
+                            ? Colors.pink.shade50
+                            : const Color.fromARGB(
+                                255,
+                                253,
+                                253,
+                                253,
+                              ),
+
+                        elevation: 6,
+
+                        margin: const EdgeInsets.all(12),
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(25),
+                        ),
+
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+
+                          child: Column(
+                            children: [
+                              if (profile.image != null)
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius:
+                                      BorderRadius.circular(20),
+
                                   child: Image.asset(
                                     profile.image!,
+
                                     width: 140,
                                     height: 140,
+
                                     fit: BoxFit.cover,
+
                                     cacheWidth: 280,
-                                    filterQuality: FilterQuality.low,
+
+                                    filterQuality:
+                                        FilterQuality.low,
                                   ),
                                 ),
 
-                                const SizedBox(height: 15),
+                              const SizedBox(height: 15),
 
-                                Text(
-                                  profile.name!,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
+                              const Text(
+                                "💀",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              Text(
+                                profile.name ?? "",
+
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight:
+                                      FontWeight.bold,
                                 ),
 
-                                const SizedBox(height: 10),
+                                textAlign: TextAlign.center,
+                              ),
 
+                              const SizedBox(height: 10),
+
+                              Text(
+                                "${profile.course ?? ""} | ${profile.yearLevel ?? ""}",
+
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              Text(
+                                "Age: ${profile.age ?? ""}",
+
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              Text(
+                                "Hobby: ${profile.hobby ?? ""}",
+
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                ),
+
+                                textAlign:
+                                    TextAlign.center,
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              Text(
+                                "Student ID: ${profile.studentId ?? ""}",
+
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              Text(
+                                "Email: ${profile.email ?? ""}",
+
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                ),
+
+                                textAlign:
+                                    TextAlign.center,
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              Text(
+                                "Favorite Subject: ${profile.favoriteSubject ?? ""}",
+
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                ),
+
+                                textAlign:
+                                    TextAlign.center,
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              Text(
                                 profile.active == true
-                                    ? Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.green.shade100,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Text(
-                                          "ACTIVE",
-                                          style: TextStyle(
-                                            color: Colors.green.shade800,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.red.shade100,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Text(
-                                          "INACTIVE",
-                                          style: TextStyle(
-                                            color: Colors.red.shade800,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                    ? "ACTIVE"
+                                    : "INACTIVE",
+
+                                style: TextStyle(
+                                  fontSize: 18,
+
+                                  fontWeight:
+                                      FontWeight.bold,
+
+                                  color:
+                                      profile.active == true
+                                          ? Colors.green
+                                          : Colors.red,
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              profile.active == false
+                                  ? Container(
+                                      padding:
+                                          const EdgeInsets.all(
+                                        10,
+                                      ),
+
+                                      margin:
+                                          const EdgeInsets.only(
+                                        bottom: 5,
+                                      ),
+
+                                      decoration:
+                                          BoxDecoration(
+                                        color:
+                                            Colors.red.shade50,
+
+                                        borderRadius:
+                                            BorderRadius
+                                                .circular(
+                                          15,
                                         ),
                                       ),
 
-                                const SizedBox(height: 10),
+                                      child: Text(
+                                        "This student is inactive.",
 
-                                profile.active == false
-                                    ? Container(
-                                        padding: const EdgeInsets.all(10),
-                                        margin: const EdgeInsets.only(
-                                          bottom: 5,
+                                        style: TextStyle(
+                                          color:
+                                              Colors.red.shade800,
+
+                                          fontWeight:
+                                              FontWeight.bold,
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.red.shade50,
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                        child: Text(
-                                          "This student is inactive.",
-                                          style: TextStyle(
-                                            color: Colors.red.shade800,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox(),
-
-                                const SizedBox(height: 15),
-
-                                const Icon(
-                                  Icons.add,
-                                  size: 28,
-                                ),
-
-                                const Text(
-                                  "💀",
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                Text(
-                                  "Course: ${profile.course}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-
-                                Text(
-                                  "Year Level: ${profile.yearLevel}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-
-                                Text(
-                                  "Age: ${profile.age}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-
-                                Text(
-                                  "Hobby: ${profile.hobby}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-
-                                Text(
-                                  "Student ID: ${profile.studentId}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-
-                                Text(
-                                  "Email: ${profile.email}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-
-                                Text(
-                                  "Favorite Subject: ${profile.favoriteSubject}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-
-                                const SizedBox(height: 15),
-
-                                Wrap(
-                                  alignment: WrapAlignment.center,
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: [
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        setState(() {
-                                          if (favoriteStudents
-                                              .contains(profile.studentId)) {
-                                            favoriteStudents
-                                                .remove(profile.studentId);
-                                          } else {
-                                            favoriteStudents
-                                                .add(profile.studentId!);
-                                          }
-                                        });
-                                      },
-                                      icon: Icon(
-                                        isFavorite
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
                                       ),
-                                      label: Text(
-                                        isFavorite
-                                            ? "Favorited"
-                                            : "Favorite",
-                                      ),
-                                    ),
+                                    )
+                                  : const SizedBox(),
 
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: const Text(
-                                                "Edit Student",
-                                              ),
-                                              content: Text(
-                                                "E edit si ${profile.name}",
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text(
-                                                    "CLOSE",
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      icon: const Icon(Icons.edit),
-                                      label: const Text("Edit"),
-                                    ),
+                              const SizedBox(height: 10),
 
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        setState(() {
-                                          students.remove(profile);
+                              Wrap(
+                                alignment:
+                                    WrapAlignment.center,
+
+                                spacing: 8,
+
+                                runSpacing: 8,
+
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      setState(() {
+                                        if (favoriteStudents
+                                            .contains(
+                                          profile.studentId,
+                                        )) {
                                           favoriteStudents
-                                              .remove(profile.studentId);
+                                              .remove(
+                                            profile.studentId,
+                                          );
+                                        } else {
+                                          favoriteStudents.add(
+                                            profile.studentId!,
+                                          );
+                                        }
+                                      });
+                                    },
+
+                                    icon: Icon(
+                                      isFavorite
+                                          ? Icons.favorite
+                                          : Icons
+                                              .favorite_border,
+                                    ),
+
+                                    label: Text(
+                                      isFavorite
+                                          ? "Favorited"
+                                          : "Favorite",
+                                    ),
+                                  ),
+
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              "Edit ${profile.name}",
+                                            ),
+
+                                            content:
+                                                SingleChildScrollView(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+
+                                                mainAxisSize:
+                                                    MainAxisSize.min,
+
+                                                children: [
+                                                  Text(
+                                                    "Name: ${profile.name}",
+                                                  ),
+
+                                                  Text(
+                                                    "Student ID: ${profile.studentId}",
+                                                  ),
+
+                                                  Text(
+                                                    "Course: ${profile.course}",
+                                                  ),
+
+                                                  Text(
+                                                    "Year Level: ${profile.yearLevel}",
+                                                  ),
+
+                                                  Text(
+                                                    "Age: ${profile.age}",
+                                                  ),
+
+                                                  Text(
+                                                    "Hobby: ${profile.hobby}",
+                                                  ),
+
+                                                  Text(
+                                                    "Email: ${profile.email}",
+                                                  ),
+
+                                                  Text(
+                                                    "Favorite Subject: ${profile.favoriteSubject}",
+                                                  ),
+
+                                                  Text(
+                                                    profile.active ==
+                                                            true
+                                                        ? "Status: Active"
+                                                        : "Status: Inactive",
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(
+                                                    context,
+                                                  );
+                                                },
+
+                                                child:
+                                                    const Text(
+                                                  "Close",
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+
+                                    icon: const Icon(
+                                      Icons.edit,
+                                    ),
+
+                                    label: const Text(
+                                      "Edit",
+                                    ),
+                                  ),
+
+                                  if (profile.active == true)
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        setState(() {
+                                          students.remove(
+                                            profile,
+                                          );
+
+                                          favoriteStudents
+                                              .remove(
+                                            profile.studentId,
+                                          );
                                         });
 
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               "${profile.name} was removed.",
@@ -433,19 +591,352 @@ class _MyAppState extends State<MyApp> {
                                           ),
                                         );
                                       },
-                                      icon: const Icon(Icons.delete),
-                                      label: const Text("Delete"),
+
+                                      icon: const Icon(
+                                        Icons.delete,
+                                      ),
+
+                                      label: const Text(
+                                        "Delete",
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
+                      ),
+                    );
+                  },
+                ),
+    );
+  }
+}
+
+class StudentDetailsScreen extends StatelessWidget {
+  final Profile profile;
+
+  const StudentDetailsScreen({
+    super.key,
+    required this.profile,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor:
+          const Color.fromARGB(255, 0, 4, 8),
+
+      appBar: AppBar(
+        backgroundColor:
+            const Color.fromARGB(255, 1, 1, 100),
+
+        centerTitle: true,
+
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+
+        title: const Text(
+          "Student Details",
+
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+
+          child: Card(
+            color: const Color.fromARGB(
+              255,
+              253,
+              253,
+              253,
+            ),
+
+            elevation: 6,
+
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+
+              child: Column(
+                children: [
+                  if (profile.image != null)
+                    ClipRRect(
+                      borderRadius:
+                          BorderRadius.circular(20),
+
+                      child: Image.asset(
+                        profile.image!,
+
+                        width: 180,
+                        height: 180,
+
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  Text(
+                    profile.name ?? "",
+
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Text(
+                    "Student ID: ${profile.studentId ?? ""}",
+
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "Course: ${profile.course ?? ""}",
+
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "Year Level: ${profile.yearLevel ?? ""}",
+
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "Age: ${profile.age ?? ""}",
+
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "Hobby: ${profile.hobby ?? ""}",
+
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "Email: ${profile.email ?? ""}",
+
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "Favorite Subject: ${profile.favoriteSubject ?? ""}",
+
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  Text(
+                    profile.active == true
+                        ? "Status: Active"
+                        : "Status: Inactive",
+
+                    style: TextStyle(
+                      fontSize: 18,
+
+                      fontWeight: FontWeight.bold,
+
+                      color: profile.active == true
+                          ? Colors.green
+                          : Colors.red,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                              "Edit ${profile.name}",
+                            ),
+
+                            content:
+                                SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+
+                                mainAxisSize:
+                                    MainAxisSize.min,
+
+                                children: [
+                                  Text(
+                                    "Name: ${profile.name}",
+                                  ),
+
+                                  Text(
+                                    "Student ID: ${profile.studentId}",
+                                  ),
+
+                                  Text(
+                                    "Course: ${profile.course}",
+                                  ),
+
+                                  Text(
+                                    "Year Level: ${profile.yearLevel}",
+                                  ),
+
+                                  Text(
+                                    "Age: ${profile.age}",
+                                  ),
+
+                                  Text(
+                                    "Hobby: ${profile.hobby}",
+                                  ),
+
+                                  Text(
+                                    "Email: ${profile.email}",
+                                  ),
+
+                                  Text(
+                                    "Favorite Subject: ${profile.favoriteSubject}",
+                                  ),
+
+                                  Text(
+                                    profile.active == true
+                                        ? "Status: Active"
+                                        : "Status: Inactive",
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(
+                                    context,
+                                  );
+                                },
+
+                                child: const Text(
+                                  "Close",
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
+
+                    icon: const Icon(
+                      Icons.edit,
+                    ),
+
+                    label: const Text(
+                      "Edit",
+                    ),
                   ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
+}
+
+class AddStudentScreen extends StatelessWidget {
+  const AddStudentScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor:
+          const Color.fromARGB(255, 0, 4, 8),
+
+      appBar: AppBar(
+        backgroundColor:
+            const Color.fromARGB(255, 1, 1, 100),
+
+        centerTitle: true,
+
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+
+        title: const Text(
+          "Add Student",
+
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+
+      body: const Center(
+        child: Text(
+          "Add Student Screen",
+
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(const MyApp());
 }
